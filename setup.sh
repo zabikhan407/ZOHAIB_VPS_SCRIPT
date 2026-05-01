@@ -55,6 +55,13 @@ bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release
 echo -e "${C}[3/3]${NC} Directories ban rahi hain..."
 mkdir -p /etc/zohaib/
 mkdir -p /var/log/xray/
+# --- DOWNLOAD COMPONENTS ---
+echo -e "${C}Downloading Menu Files...${NC}"
+wget -q -O /usr/bin/menu "${REPO_URL}/menu.sh"
+chmod +x /usr/bin/menu
+
+# Aik short command banate hain taake sirf 'menu' likhne se panel khul jaye
+chmod +x /usr/bin/menu
 
 echo -e ""
 echo -e "${G}Mubarak Ho! ZOHAIB_NETWORK Script Install Ho Gayi Hai.${NC}"
