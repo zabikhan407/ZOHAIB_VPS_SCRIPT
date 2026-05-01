@@ -1,49 +1,18 @@
 #!/bin/bash
-
-# --- RANG (Colors) ---
-P='\033[0;35m'
-C='\033[0;36m'
-G='\033[0;32m'
-NC='\033[0m'
-
-# --- LICENSE CHECK ---
-MYIP=$(wget -qO- ipv4.icanhazip.com)
 REPO_URL="https://raw.githubusercontent.com/zabikhan407/ZOHAIB_VPS_SCRIPT/main"
-VALID_IP=$(curl -sS ${REPO_URL}/permission.txt | grep -w $MYIP)
 
-if [[ ! $VALID_IP ]]; then
-    echo "ACCESS DENIED!"
-    exit 1
-fi
+# 1. Update & Tools (Visual)
+echo "ZOHAIB_NETWORK: Starting Installation..."
+apt update && apt upgrade -y
+apt install jq curl socat xz-utils wget net-tools -y
 
-# --- 1. HEAVY INSTALLATION (No Banners Here) ---
-echo -e "${C}ZOHAIB_NETWORK: Installing dependencies, please wait...${NC}"
+# 2. Xray & Webserver
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install
 
-export DEBIAN_FRONTEND=noninteractive
-apt-get update -y > /dev/null 2>&1
-apt-get install jq curl socat xz-utils wget net-tools -y > /dev/null 2>&1
+# 3. Download Menu
+wget -O /usr/bin/menu "${REPO_URL}/menu.sh" && chmod +x /usr/bin/menu
 
-# Xray Core Install
-echo -e "${C}ZOHAIB_NETWORK: Setting up Xray Core...${NC}"
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install > /dev/null 2>&1
-
-# Menu aur Folders
-mkdir -p /etc/zohaib/
-mkdir -p /var/log/xray/
-wget -q -O /usr/bin/menu "${REPO_URL}/menu.sh"
-chmod +x /usr/bin/menu
-
-# --- 2. FINAL FINISH (Banner at the End) ---
+# Yahan hum bad mein aur files add karenge jise add-ssh, add-vless wagera
 clear
-echo -e "${P}==================================================${NC}"
-echo -e "${C}  ███████╗ ██████╗ ██╗  ██╗ █████╗ ██╗██████╗   ${NC}"
-echo -e "${C}  ╚══███╔╝██╔═══██╗██║  ██║██╔══██╗██║██╔══██╗  ${NC}"
-echo -e "${C}    ███╔╝ ██║   ██║███████║███████║██║██████╔╝  ${NC}"
-echo -e "${C}   ███╔╝  ██║   ██║██╔══██║██╔══██║██║██╔══██╗  ${NC}"
-echo -e "${C}  ███████╗╚██████╔╝██║  ██║██║  ██║██║██████╔╝  ${NC}"
-echo -e "${C}  ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═════╝   ${NC}"
-echo -e "          ${P}• ZOHAIB NETWORK PROJECT •${NC}"
-echo -e "${P}==================================================${NC}"
-echo -e " ${G}MUBARAK HO! SCRIPT SUCCESSFULLY INSTALL HO GAYI.${NC}"
-echo -e " ${C}Ab aap sirf ${G}'menu'${C} likh kar panel khol sakte hain.${NC}"
-echo -e "${P}==================================================${NC}"
+echo "ZOHAIB_NETWORK: Installation Mukammal!"
+echo "Type 'menu' to start."
