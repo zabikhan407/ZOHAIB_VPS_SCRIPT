@@ -1,61 +1,34 @@
 #!/bin/bash
-
-# --- RANG (Colors) ---
-BIWhite='\033[1;97m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
+P='\033[0;35m'
+C='\033[0;36m'
 G='\033[0;32m'
-R='\033[0;31m'
 NC='\033[0m'
 
-# --- SERVER INFORMATION ---
 IP=$(curl -s ipinfo.io/ip)
 RAM=$(free -m | awk 'NR==2{printf "%s/%s MB", $3,$2 }')
 ISP=$(curl -s ipinfo.io/org | cut -d " " -f 2-)
-CITY=$(curl -s ipinfo.io/city)
-DATE=$(date +"%a, %d %b %Y %H:%M:%S")
-UPTIME=$(uptime -p | cut -d " " -f 2-)
-
-# --- SERVICE STATUS ---
-status_ssh=$(systemctl is-active ssh)
-status_xray=$(systemctl is-active xray)
-[[ $status_ssh == "active" ]] && ssh_stat="${G}ON${NC}" || ssh_stat="${R}OFF${NC}"
-[[ $status_xray == "active" ]] && xray_stat="${G}ON${NC}" || xray_stat="${R}OFF${NC}"
+UPTIME=$(uptime -p)
 
 clear
-echo -e "${PURPLE}==================================================${NC}"
-echo -e "           ${CYAN}• ZOHAIB NETWORK PROJECT •${NC}"
-echo -e "${PURPLE}==================================================${NC}"
-echo -e " ${CYAN}OS      :${NC} $(lsb_release -d | cut -f2)"
-echo -e " ${CYAN}IP      :${NC} $IP"
-echo -e " ${CYAN}RAM     :${NC} $RAM"
-echo -e " ${CYAN}ISP     :${NC} $ISP"
-echo -e " ${CYAN}CITY    :${NC} $CITY"
-echo -e " ${CYAN}DATE    :${NC} $DATE"
-echo -e " ${CYAN}UPTIME  :${NC} $UPTIME"
-echo -e "${PURPLE}==================================================${NC}"
-echo -e " ${CYAN}SSH: $ssh_stat  NGINX: ${G}ON${NC}  X-RAY: $xray_stat${NC}"
-echo -e "${PURPLE}==================================================${NC}"
-echo -e "           ${CYAN}• SCRIPT MENU •${NC}"
-echo -e "${PURPLE}==================================================${NC}"
-echo -e " ${CYAN}[ 01 ]${NC} SSH Menu         ${CYAN}[ 06 ]${NC} Bot Menu"
-echo -e " ${CYAN}[ 02 ]${NC} XRAY Menu        ${CYAN}[ 07 ]${NC} Backup Menu"
-echo -e " ${CYAN}[ 03 ]${NC} Check Online     ${CYAN}[ 08 ]${NC} System Menu"
-echo -e " ${CYAN}[ 04 ]${NC} GB Limit Set     ${CYAN}[ 09 ]${NC} ISP Tracking"
-echo -e " ${CYAN}[ 05 ]${NC} Trojan Menu      ${CYAN}[ 10 ]${NC} Domain/SNI Check"
-echo -e ""
-echo -e " ${CYAN}[•x ]${NC} Exit Panel"
-echo -e "${PURPLE}==================================================${NC}"
-echo -e " ${CYAN}Client Name   :${NC} ZOHAIB_NETWORK"
-echo -e " ${CYAN}Scrip Version :${NC} V1.0 Special Edition"
-echo -e "${PURPLE}==================================================${NC}"
-
-# --- SELECTION LOGIC ---
-read -p " Select menu :  " opt
+echo -e "${P}==================================================${NC}"
+echo -e "           ${C}• ZOHAIB NETWORK PROJECT •${NC}"
+echo -e "${P}==================================================${NC}"
+echo -e " ${C}IP      :${NC} $IP"
+echo -e " ${C}RAM     :${NC} $RAM"
+echo -e " ${C}ISP     :${NC} $ISP"
+echo -e " ${C}UPTIME  :${NC} $UPTIME"
+echo -e "${P}==================================================${NC}"
+echo -e " ${C}[ 01 ]${NC} SSH Menu         ${C}[ 06 ]${NC} Bot Menu"
+echo -e " ${C}[ 02 ]${NC} XRAY Menu        ${C}[ 07 ]${NC} Backup Menu"
+echo -e " ${C}[ 03 ]${NC} Check Online     ${C}[ 08 ]${NC} System Menu"
+echo -e " ${C}[ 04 ]${NC} GB Limit Set     ${C}[ 09 ]${NC} ISP Tracking"
+echo -e " ${C}[ 05 ]${NC} Trojan Menu      ${C}[ 10 ]${NC} Domain Setup"
+echo -e "${P}==================================================${NC}"
+read -p " Select menu : " opt
 case $opt in
-01 | 1) ssh-menu ;;
-02 | 2) xray-menu ;;
-03 | 3) check-online ;;
+1 | 01) ssh-menu ;;
+2 | 02) xray-menu ;;
+3 | 03) check-online ;;
 x) exit ;;
 *) menu ;;
 esac
