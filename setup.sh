@@ -1,40 +1,57 @@
 #!/bin/bash
-# ZOHAIB_NETWORK Professional Master Setup
 export DEBIAN_FRONTEND=noninteractive
-P='\033[0;35m' ; C='\033[0;36m' ; G='\033[0;32m' ; NC='\033[0m'
 REPO_URL="https://raw.githubusercontent.com/zabikhan407/ZOHAIB_VPS_SCRIPT/main"
 
-# 1. Firewall Guard (SSH Connection na toote)
-iptables -I INPUT -p tcp --dport 22 -j ACCEPT
+# 1. Ports Open
 iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 iptables -I INPUT -p tcp --dport 443 -j ACCEPT
 iptables -I INPUT -p tcp --dport 8880 -j ACCEPT
 
-# 2. Base Tools Installation
-apt-get update && apt-get install jq curl socat xz-utils wget net-tools python3 nginx screen -y
+# 2. Base Engines
+apt-get update && apt-get install jq curl socat wget net-tools nginx python3 screen -y
 
-# 3. Xray Core Installation
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install
+# 3. Xray Config (The Brain)
+mkdir -p /usr/local/etc/xray/
+cat <<EOF > /usr/local/etc/xray/config.json
+{
+  "log": { "access": "/var/log/xray/access.log", "loglevel": "info" },
+  "inbounds": [{
+    "port": 10001, "listen": "127.0.0.1", "protocol": "vless",
+    "settings": { "clients": [], "decryption": "none" },
+    "streamSettings": { "network": "ws", "wsSettings": { "path": "/vless" } }
+  }],
+  "outbounds": [{ "protocol": "freedom" }]
+}
+EOF
+systemctl restart xray
 
-# 4. Download All Working Components
-files=("menu" "ssh-menu" "xray-menu" "add-ssh" "add-vless" "check-online" "list-user" "domain-setup")
+# 4. Nginx "409 Conflict" Fix Config
+cat <<EOF > /etc/nginx/sites-available/default
+server {
+    listen 80;
+    location /vless {
+        proxy_redirect off;
+        proxy_pass http://127.0.0.1:10001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host \$http_host;
+    }
+}
+EOF
+systemctl restart nginx
+
+# 5. Download Modules
+files=("menu" "ssh-menu" "xray-menu" "add-ssh" "add-vless" "check-online" "domain-setup")
 for file in "${files[@]}"; do
     wget -q -O /usr/bin/${file} "${REPO_URL}/${file}.sh"
     chmod +x /usr/bin/${file}
 done
 
-# 5. SSH WebSocket Engine (Asli Working Tool)
+# 6. SSH WS Engine (Python 3)
 wget -q -O /usr/bin/ws-python "${REPO_URL}/ws-python.py"
 chmod +x /usr/bin/ws-python
 screen -dmS ws-python python3 /usr/bin/ws-python 8880
 
-# 6. Directories & Banner
-mkdir -p /etc/zohaib/
-mkdir -p /etc/xray/
-echo "ZOHAIB_NETWORK" > /etc/issue.net
-
 clear
-echo -e "${P}========================================${NC}"
-echo -e "${G}     ZOHAIB_NETWORK SETUP COMPLETE      ${NC}"
-echo -e "${P}========================================${NC}"
-echo -e "Ab 'menu' likhein. Saare options working hain."
+echo "SETUP COMPLETE! Ab 'menu' likhein."
