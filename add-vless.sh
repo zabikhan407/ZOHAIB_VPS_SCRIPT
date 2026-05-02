@@ -1,10 +1,9 @@
 #!/bin/bash
 clear
-# ... (Banner aur Input wahi rahega) ...
-# Link generate karne ke baad ye add karein:
-echo -e "${G}Link TLS :${NC} vless://$uuid@$domain:443?path=/vless&security=tls&encryption=none&type=ws#$user"
-echo -e "${G}Link NTLS:${NC} vless://$uuid@$domain:80?path=/vless&security=none&encryption=none&type=ws#$user"
-echo -e "----------------------------------------------"
-echo -e "${YL}Copy kar lein. Wapis janay ke liye Enter dabayein...${NC}"
-read # Ye line screen ko rok kar rakhegi
-xray-menu
+read -p "User: " user
+read -p "Days: " days
+uuid=$(cat /proc/sys/kernel/random/uuid)
+IP=$(curl -s ipinfo.io/ip)
+echo -e "VLESS ACCOUNT\nUUID: $uuid\nPort: 80\nPath: /vless"
+echo -e "Link: vless://$uuid@$IP:80?path=/vless&security=none&encryption=none&type=ws#$user"
+read -p "Press Enter..." ; menu
